@@ -164,9 +164,23 @@
         sizes: "No aplica",
         composition: "PU (cuero sintético de alta calidad)",
         images: [
-          "imagenes/1.jpg",
-          "imagenes/2.jpg",
-          "imagenes/3.jpg"
+          "imagenes/th_bdb_broche_1.jpg",
+          "imagenes/th_bdb_broche_2.jpg",
+          "imagenes/th_bdb_broche_3.jpg"
+        ]
+      },
+      {
+        id: 2,
+        status: "stock", // "stock" o "preventa"
+        brand: "TOMMY HILFIGER",
+        name: "Billetera para dama con cierre",
+        price: "S/ 199.00",
+        sizes: "Única",
+        composition: "PU (cuero sintético de alta calidad)",
+        images: [
+          "imagenes/th_bdb_cierre_1.jpg",
+          "imagenes/th_bdb_cierre_2.jpg",
+          "imagenes/th_bdb_cierre_3.jpg"
         ]
       }
     ];
@@ -227,7 +241,7 @@
             <img 
               id="main-img-${product.id}"
               src="${product.images[0]}" 
-              onerror="this.src='https://placehold.co/600x600/FAF8F5/78716c?text=Subir+imagenes/1.jpg'"
+              onerror="this.src='https://placehold.co/600x600/FAF8F5/78716c?text=Subir+${product.images[0]}'"
               alt="${product.name}" 
               class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
             >

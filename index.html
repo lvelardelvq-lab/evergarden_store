@@ -45,6 +45,14 @@
       transform: translateY(-2px);
       box-shadow: 0 10px 24px -12px rgba(36, 34, 32, 0.14);
     }
+    #modal-imagen-img {
+      transition: transform 0.25s ease;
+      transform-origin: center center;
+    }
+    #modal-imagen-img.zoom-activo {
+      transform: scale(1.85);
+      cursor: zoom-out;
+    }
   </style>
 </head>
 <body class="antialiased selection:bg-champagne/25 selection:text-grafito">
@@ -72,9 +80,12 @@
           Catálogo de Carteras y Billeteras
         </h1>
       </div>
-      <p class="text-xs text-suave max-w-md leading-snug">
-        Piezas originales de USA. Consultas y reservas directas por WhatsApp.
-      </p>
+      <div class="text-xs text-suave max-w-md leading-snug space-y-1">
+        <p>Piezas originales de USA. Consultas y reservas directas por WhatsApp.</p>
+        <p class="text-[11px] text-rojoOtono font-medium">
+          Preventa válida solo hasta el 22 de noviembre del 2026.
+        </p>
+      </div>
     </div>
 
     <div class="mt-4 flex flex-wrap items-center justify-between gap-2">
@@ -115,8 +126,37 @@
     </div>
   </footer>
 
+  <!-- Modal con zoom interactivo -->
+  <div id="modal-zoom" class="fixed inset-0 z-50 hidden bg-grafito/80 backdrop-blur-xs flex items-center justify-center p-4" role="dialog" aria-modal="true">
+    <div class="bg-superficie border border-borde rounded-2xl max-w-2xl w-full p-4 shadow-xl">
+      <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-borde/70">
+        <div>
+          <p id="modal-titulo" class="font-serif text-lg font-semibold text-grafito leading-tight"></p>
+          <p id="modal-subtitulo" class="text-[11px] text-suave leading-tight"></p>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <button type="button" id="btn-toggle-zoom" onclick="alternarZoomModal()"
+            class="px-2.5 py-1 text-xs rounded-lg border border-borde bg-marfil text-grafito hover:border-champagne leading-none">
+            Zoom +
+          </button>
+          <button type="button" onclick="cerrarZoomModal()" aria-label="Cerrar vista ampliada"
+            class="w-7 h-7 rounded-lg border border-borde bg-marfil text-grafito hover:bg-borde/50 flex items-center justify-center text-xs leading-none">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <div id="modal-lienzo" class="mt-3 aspect-[4/3] w-full rounded-xl bg-marfil border border-borde/70 overflow-hidden flex items-center justify-center">
+        <img id="modal-imagen-img" src="" alt="" onclick="alternarZoomModal()" class="max-h-full max-w-full object-contain p-3 cursor-zoom-in select-none" />
+      </div>
+
+      <div id="modal-miniaturas" class="flex flex-wrap gap-1.5 mt-3"></div>
+    </div>
+  </div>
+
   <script>
     const WHATSAPP_NUMBER = '51928439121';
+    const FECHA_LIMITE_PREVENTA = '22 de noviembre del 2026';
 
     const productos = [
       {
@@ -224,6 +264,7 @@
 
     let filtroMarca = 'ALL';
     let filtroEstado = 'ALL';
+    let zoomActivo = false;
 
     function cambiarFoto(prodIndex, imgSrc, btnEl) {
       const mainImg = document.getElementById(`img-principal-${prodIndex}`);
@@ -241,6 +282,94 @@
         btnEl.classList.add('border-champagneOscuro');
       }
     }
+
+    function abrirZoomProducto(prodId, imgSrc) {
+      const prod = productos.find(p => p.id === prodId);
+      if (!prod) return;
+
+      const actualSrc = imgSrc || prod.imagenes[0];
+      const modal = document.getElementById('modal-zoom');
+      const modalImg = document.getElementById('modal-imagen-img');
+      const modalTitulo = document.getElementById('modal-titulo');
+      const modalSubtitulo = document.getElementById('modal-subtitulo');
+      const modalThumbs = document.getElementById('modal-miniaturas');
+
+      zoomActivo = false;
+      modalImg.classList.remove('zoom-activo');
+      modalImg.classList.add('cursor-zoom-in');
+      document.getElementById('btn-toggle-zoom').textContent = 'Zoom +';
+
+      modalImg.src = actualSrc;
+      modalImg.alt = prod.nombre;
+      modalTitulo.textContent = prod.nombre;
+      modalSubtitulo.textContent = prod.estado === 'Preventa'
+        ? `${prod.marca} · Preventa hasta el ${FECHA_LIMITE_PREVENTA}`
+        : `${prod.marca} · Stock`;
+
+      if (prod.imagenes.length > 1) {
+        modalThumbs.innerHTML = prod.imagenes.map((src, i) => `
+          <button type="button" onclick="seleccionarFotoModal('${src}', this)"
+            class="modal-thumb w-11 h-11 rounded border overflow-hidden bg-marfil ${src === actualSrc ? 'border-champagneOscuro' : 'border-borde'}">
+            <img src="${src}" alt="${prod.nombre} vista ${i + 1}" class="w-full h-full object-cover" />
+          </button>
+        `).join('');
+      } else {
+        modalThumbs.innerHTML = '';
+      }
+
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function seleccionarFotoModal(src, btnEl) {
+      const modalImg = document.getElementById('modal-imagen-img');
+      zoomActivo = false;
+      modalImg.classList.remove('zoom-activo');
+      modalImg.classList.add('cursor-zoom-in');
+      document.getElementById('btn-toggle-zoom').textContent = 'Zoom +';
+      modalImg.src = src;
+
+      document.querySelectorAll('.modal-thumb').forEach(b => {
+        b.classList.remove('border-champagneOscuro');
+        b.classList.add('border-borde');
+      });
+      if (btnEl) {
+        btnEl.classList.remove('border-borde');
+        btnEl.classList.add('border-champagneOscuro');
+      }
+    }
+
+    function alternarZoomModal() {
+      const modalImg = document.getElementById('modal-imagen-img');
+      const btn = document.getElementById('btn-toggle-zoom');
+      zoomActivo = !zoomActivo;
+      if (zoomActivo) {
+        modalImg.classList.add('zoom-activo');
+        modalImg.classList.remove('cursor-zoom-in');
+        btn.textContent = 'Alejar -';
+      } else {
+        modalImg.classList.remove('zoom-activo');
+        modalImg.classList.add('cursor-zoom-in');
+        btn.textContent = 'Zoom +';
+      }
+    }
+
+    function cerrarZoomModal() {
+      const modal = document.getElementById('modal-zoom');
+      const modalImg = document.getElementById('modal-imagen-img');
+      zoomActivo = false;
+      modalImg.classList.remove('zoom-activo');
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('modal-zoom').addEventListener('click', e => {
+      if (e.target.id === 'modal-zoom') cerrarZoomModal();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') cerrarZoomModal();
+    });
 
     function renderCatalogo() {
       const grid = document.getElementById('catalogo-grid');
@@ -281,17 +410,38 @@
             </div>`
           : '';
 
+        const avisoPreventaHtml = esPreventa
+          ? `<p class="text-[11px] text-rojoOtono font-medium leading-snug mt-1">
+              Preventa solo hasta el ${FECHA_LIMITE_PREVENTA}.
+            </p>`
+          : '';
+
+        const bloquePrecioHtml = esPreventa
+          ? `<div class="leading-tight">
+              <span class="block text-[10px] uppercase tracking-wider text-rojoOtono font-medium">Precio preventa</span>
+              <span class="text-base font-semibold text-grafito">${p.precio}</span>
+            </div>`
+          : `<div class="leading-tight">
+              <span class="block text-[10px] uppercase tracking-wider text-suave font-medium">Precio</span>
+              <span class="text-base font-semibold text-grafito">${p.precio}</span>
+            </div>`;
+
         return `
           <article id="card-${idx}" class="card-producto bg-superficie rounded-xl border border-borde p-3.5 flex flex-col justify-between">
             <div>
-              <div class="relative aspect-[4/3] w-full rounded-lg bg-marfil border border-borde/70 overflow-hidden flex items-center justify-center">
+              <div onclick="abrirZoomProducto('${p.id}', document.getElementById('img-principal-${idx}')?.src)"
+                title="Clic para ampliar y hacer zoom"
+                class="relative aspect-[4/3] w-full rounded-lg bg-marfil border border-borde/70 overflow-hidden flex items-center justify-center cursor-zoom-in group">
                 <img id="img-principal-${idx}"
                   src="${p.imagenes[0]}"
                   alt="${p.nombre}"
-                  class="w-full h-full object-contain p-2"
+                  class="w-full h-full object-contain p-2 transition-transform duration-200 group-hover:scale-105"
                   onerror="this.alt='Imagen pendiente en carpeta imagenes/'" />
                 <span class="absolute top-2 left-2 text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-full border ${badgeClass}">
                   ${p.estado}
+                </span>
+                <span class="absolute bottom-2 right-2 text-[10px] bg-superficie/90 text-grafito border border-borde px-1.5 py-0.5 rounded">
+                  Zoom
                 </span>
               </div>
 
@@ -303,11 +453,12 @@
                 <p class="text-[11px] text-suave leading-snug mt-1">
                   <span class="font-medium text-grafito/80">Composición:</span> ${p.composicion}
                 </p>
+                ${avisoPreventaHtml}
               </div>
             </div>
 
             <div class="mt-3.5 pt-2.5 border-t border-borde/70 flex items-center justify-between gap-2">
-              <span class="text-base font-semibold text-grafito">${p.precio}</span>
+              ${bloquePrecioHtml}
               <a href="${waUrl}" target="_blank" rel="noopener noreferrer"
                 class="px-3 py-1.5 rounded-lg bg-grafito hover:bg-champagneOscuro text-marfil text-xs font-medium transition-colors leading-none">
                 Consultar WhatsApp

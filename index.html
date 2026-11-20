@@ -49,7 +49,6 @@
 </head>
 <body class="antialiased selection:bg-champagne/25 selection:text-grafito">
 
-  <!-- Encabezado compacto -->
   <header class="sticky top-0 z-30 bg-marfil/95 backdrop-blur-sm border-b border-borde">
     <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
       <div class="flex items-baseline gap-3">
@@ -57,11 +56,10 @@
           EVERGARDEN STORE
         </a>
         <span class="text-[11px] uppercase tracking-widest text-suave hidden md:inline">
-          Importaciones &amp; E-commerce
+          Importaciones &amp; Accesorios
         </span>
       </div>
 
-      <!-- Barra sutil de paleta de referencia -->
       <div class="flex items-center gap-2 text-[11px] text-suave" title="Paleta de la boutique">
         <span class="hidden sm:inline">Paleta:</span>
         <span class="w-3 h-3 rounded-full border border-borde bg-[#FAF8F5]" title="Marfil"></span>
@@ -73,12 +71,11 @@
     </div>
   </header>
 
-  <!-- Presentación compacta -->
   <section class="max-w-6xl mx-auto px-4 pt-6 pb-4 border-b border-borde/70">
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-3">
       <div>
         <p class="text-[11px] uppercase tracking-[0.18em] text-champagneOscuro font-medium leading-tight">
-          Stock inmediato y preventa
+          Selección curada · Stock inmediato y preventa
         </p>
         <h1 class="font-serif text-2xl sm:text-3xl font-semibold text-grafito leading-tight mt-0.5">
           Catálogo de Carteras y Billeteras
@@ -89,7 +86,6 @@
       </p>
     </div>
 
-    <!-- Filtros -->
     <div class="mt-4 flex flex-wrap items-center justify-between gap-2">
       <div id="filtros-marca" class="flex flex-wrap gap-1.5">
         <button data-marca="ALL" class="filtro-btn px-3 py-1 text-xs rounded-full bg-grafito text-marfil font-medium leading-none">
@@ -117,12 +113,10 @@
     </div>
   </section>
 
-  <!-- Cuadrícula de productos -->
   <main class="max-w-6xl mx-auto px-4 py-6">
     <div id="catalogo-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
   </main>
 
-  <!-- Pie de página compacto -->
   <footer class="border-t border-borde bg-superficie/70 mt-6">
     <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-suave">
       <span class="font-serif text-base font-semibold text-champagne">EVERGARDEN STORE</span>
@@ -140,7 +134,7 @@
         nombre: 'Cartera Tommy Hilfiger color negro',
         estado: 'Stock',
         precio: 'S/ 359.00',
-        composicion: 'Cuero sintético de alta calidad - Poliuretano',
+        composicion: 'Cuero sintético de alta calidad',
         imagenes: ['imagenes/th_cdn_broche_1.jpeg']
       },
       {
@@ -149,8 +143,12 @@
         nombre: 'Billetera broche Tommy Hilfiger',
         estado: 'Stock',
         precio: 'S/ 219.00',
-        composicion: 'Material sintético de alta calidad - Poliuretano',
-        imagenes: ['imagenes/th_broche_01.jpg']
+        composicion: 'Material sintético de alta calidad',
+        imagenes: [
+          'imagenes/th_bdb_broche_1.jpg',
+          'imagenes/th_bdb_broche_2.jpg',
+          'imagenes/th_bdb_broche_3.jpg'
+        ]
       },
       {
         id: 'th-billetera-cierre',
@@ -158,8 +156,12 @@
         nombre: 'Billetera cierre Tommy Hilfiger',
         estado: 'Stock',
         precio: 'S/ 199.00',
-        composicion: 'Material sintético de alta calidad - Poliuretano',
-        imagenes: ['imagenes/th_cierre_01.jpg']
+        composicion: 'Material sintético de alta calidad',
+        imagenes: [
+          'imagenes/th_bdb_cierre_1.jpg',
+          'imagenes/th_bdb_cierre_2.jpg',
+          'imagenes/th_bdb_cierre_3.jpg'
+        ]
       },
       {
         id: 'th-cartera-negra',
@@ -167,8 +169,8 @@
         nombre: 'Cartera negra Tommy Hilfiger',
         estado: 'Stock',
         precio: 'S/ 359.00',
-        composicion: 'Cuero sintético de alta calidad - Poliuretano',
-        imagenes: ['imagenes/th_cartera_01.jpg']
+        composicion: 'Material sintético de alta calidad',
+        imagenes: ['imagenes/th_cartera_1.jpg']
       },
       {
         id: 'th-billetera-tres-cuerpos-negro',
@@ -216,7 +218,7 @@
         estado: 'Stock',
         precio: 'S/ 299.00',
         composicion: 'Material sintético de alta calidad',
-        imagenes: ['imagenes/mk_billetera_marron_01.jpg']
+        imagenes: ['imagenes/mk_bvm_1.jpg']
       },
       {
         id: 'mk-cartera-marron',
@@ -225,7 +227,7 @@
         estado: 'Stock',
         precio: 'S/ 499.00',
         composicion: 'Material sintético de alta calidad',
-        imagenes: ['imagenes/mk_cartera_marron_01.jpg']
+        imagenes: ['imagenes/mk_cdm_1.jpg']
       },
       {
         id: 'mk-billetera-negra',
@@ -234,7 +236,7 @@
         estado: 'Stock',
         precio: 'S/ 359.00',
         composicion: 'Material sintético de alta calidad',
-        imagenes: ['imagenes/mk_billetera_negra_01.jpg']
+        imagenes: ['imagenes/mk_bdn_1.jpg']
       }
     ];
 

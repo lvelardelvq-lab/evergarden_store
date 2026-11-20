@@ -117,6 +117,25 @@
 
   <main class="max-w-6xl mx-auto px-4 py-6">
     <div id="catalogo-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+    <!-- Sección Gestionamos tu importación -->
+    <section class="mt-8 bg-superficie border border-borde rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="space-y-1">
+        <p class="text-[10px] uppercase tracking-[0.18em] text-champagneOscuro font-semibold leading-tight">
+          Pedidos personalizados
+        </p>
+        <h2 class="font-serif text-xl sm:text-2xl font-semibold text-grafito leading-tight">
+          Gestionamos tu importación
+        </h2>
+        <p class="text-xs text-suave leading-snug max-w-xl">
+          ¿Tienes algún otro producto de USA que te gustaría comprar? Nosotros gestionamos la importación por ti. Consulta gratis.
+        </p>
+      </div>
+      <a id="btn-importacion-wa" href="#" target="_blank" rel="noopener noreferrer"
+        class="shrink-0 px-4 py-2 rounded-lg bg-grafito hover:bg-champagneOscuro text-marfil text-xs font-medium transition-colors leading-none text-center">
+        Consultar gratis por WhatsApp
+      </a>
+    </section>
   </main>
 
   <footer class="border-t border-borde bg-superficie/70 mt-6">
@@ -234,6 +253,58 @@
         ]
       },
       {
+        id: 'th-bandolera-azul-rayas',
+        marca: 'Tommy Hilfiger',
+        nombre: 'Bolso Bandolera con rayas distintivas - Azul espacial',
+        estado: 'Preventa',
+        precio: 'S/ 229.00',
+        composicion: '90% nailon reciclado, 10% cuero',
+        imagenes: [
+          'imagenes/pth_cdbazul_rayas_01.jpg',
+          'imagenes/pth_cdbazul_rayas_02.jpg',
+          'imagenes/pth_cdbazul_rayas_03.jpg'
+        ]
+      },
+      {
+        id: 'th-bandolera-roja-acolchada',
+        marca: 'Tommy Hilfiger',
+        nombre: 'Bolso Bandolera con acolchado con solapa - Rojo',
+        estado: 'Preventa',
+        precio: 'S/ 279.00',
+        composicion: '100% poliuretano',
+        imagenes: [
+          'imagenes/pth_cdr_acolchado_01.jpg',
+          'imagenes/pth_cdr_acolchado_03.jpg',
+          'imagenes/pth_cdr_acolchado_04.jpg'
+        ]
+      },
+      {
+        id: 'th-billetera-rojo-sangre-cierre',
+        marca: 'Tommy Hilfiger',
+        nombre: 'Billetera con cierre - Rojo sangre',
+        estado: 'Preventa',
+        precio: 'S/ 199.00',
+        composicion: '100% poliuretano',
+        imagenes: [
+          'imagenes/pth_bdrojosangre_cierre_01.jpg',
+          'imagenes/pth_bdrojosangre_cierre_02.jpg',
+          'imagenes/pth_bdrojosangre_cierre_03.jpg'
+        ]
+      },
+      {
+        id: 'th-cartera-micro-tote-negro',
+        marca: 'Tommy Hilfiger',
+        nombre: 'Cartera Micro Tote - Negro',
+        estado: 'Preventa',
+        precio: 'S/ 299.00',
+        composicion: '100% poliuretano',
+        imagenes: [
+          'imagenes/pth_cdn_microtote_01.jpg',
+          'imagenes/pth_cdn_microtote_02.jpg',
+          'imagenes/pth_cdn_microtote_03.jpg'
+        ]
+      },
+      {
         id: 'mk-billetera-marron',
         marca: 'Michael Kors',
         nombre: 'Billetera marrón Michael Kors',
@@ -266,9 +337,28 @@
     let filtroEstado = 'ALL';
     let zoomActivo = false;
 
-    function cambiarFoto(prodIndex, imgSrc, btnEl) {
+    function resolverUrlImagen(rutaRelativa) {
+      try {
+        return new URL(rutaRelativa, window.location.href).href;
+      } catch (e) {
+        return rutaRelativa;
+      }
+    }
+
+    function actualizarEnlaceWhatsappProducto(idx, nombreProducto, estadoProducto, precioProducto, rutaImg) {
+      const linkEl = document.getElementById(`wa-link-${idx}`);
+      if (!linkEl) return;
+      const urlFoto = resolverUrlImagen(rutaImg);
+      const etiquetaPrecio = estadoProducto === 'Preventa' ? 'Precio preventa' : 'Precio';
+      const texto = `Hola EVERGARDEN STORE, me interesa este producto:\n• Producto: ${nombreProducto}\n• Estado: ${estadoProducto}\n• ${etiquetaPrecio}: ${precioProducto}\n• Foto: ${urlFoto}`;
+      linkEl.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(texto)}`;
+    }
+
+    function cambiarFoto(prodIndex, imgSrc, btnEl, nombreProd, estadoProd, precioProd) {
       const mainImg = document.getElementById(`img-principal-${prodIndex}`);
       if (mainImg) mainImg.src = imgSrc;
+
+      actualizarEnlaceWhatsappProducto(prodIndex, nombreProd, estadoProd, precioProd, imgSrc);
 
       const card = document.getElementById(`card-${prodIndex}`);
       if (card) {
@@ -371,6 +461,13 @@
       if (e.key === 'Escape') cerrarZoomModal();
     });
 
+    function configurarEnlaceImportacion() {
+      const btnImp = document.getElementById('btn-importacion-wa');
+      if (!btnImp) return;
+      const msg = 'Hola EVERGARDEN STORE, tengo un producto de USA que me gustaría comprar y quiero consultar su importación.';
+      btnImp.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    }
+
     function renderCatalogo() {
       const grid = document.getElementById('catalogo-grid');
       const filtrados = productos.filter(p => {
@@ -393,8 +490,10 @@
           ? 'bg-rojoOtono/10 text-rojoOtono border-rojoOtono/25'
           : 'bg-champagne/15 text-champagneOscuro border-champagne/30';
 
+        const urlFotoInicial = resolverUrlImagen(p.imagenes[0]);
+        const etiquetaPrecioMsg = esPreventa ? 'Precio preventa' : 'Precio';
         const mensajeWa = encodeURIComponent(
-          `Hola EVERGARDEN STORE, me interesa: ${p.nombre} (${p.estado}) - ${p.precio}`
+          `Hola EVERGARDEN STORE, me interesa este producto:\n• Producto: ${p.nombre}\n• Estado: ${p.estado}\n• ${etiquetaPrecioMsg}: ${p.precio}\n• Foto: ${urlFotoInicial}`
         );
         const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${mensajeWa}`;
 
@@ -402,7 +501,7 @@
           ? `<div class="flex gap-1.5 mt-2">
               ${p.imagenes.map((img, i) => `
                 <button type="button"
-                  onclick="cambiarFoto(${idx}, '${img}', this)"
+                  onclick="cambiarFoto(${idx}, '${img}', this, '${p.nombre.replace(/'/g, "\\'")}', '${p.estado}', '${p.precio}')"
                   class="thumb-btn w-10 h-10 rounded border overflow-hidden bg-marfil ${i === 0 ? 'border-champagneOscuro' : 'border-borde'}">
                   <img src="${img}" alt="${p.nombre} vista ${i + 1}" class="w-full h-full object-cover" onerror="this.style.opacity='0.35'" />
                 </button>
@@ -459,7 +558,7 @@
 
             <div class="mt-3.5 pt-2.5 border-t border-borde/70 flex items-center justify-between gap-2">
               ${bloquePrecioHtml}
-              <a href="${waUrl}" target="_blank" rel="noopener noreferrer"
+              <a id="wa-link-${idx}" href="${waUrl}" target="_blank" rel="noopener noreferrer"
                 class="px-3 py-1.5 rounded-lg bg-grafito hover:bg-champagneOscuro text-marfil text-xs font-medium transition-colors leading-none">
                 Consultar WhatsApp
               </a>
@@ -491,6 +590,7 @@
       });
     });
 
+    configurarEnlaceImportacion();
     renderCatalogo();
   </script>
 </body>
